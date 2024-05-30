@@ -30,7 +30,6 @@ class BlogController(SqlBase):
         db.add(db_blog)
         db.commit()
         db.refresh(db_blog)
-        print(db_blog)
         return db_blog
 
     def update_blog(self, blog_id: int, blog: BlogCreate):
