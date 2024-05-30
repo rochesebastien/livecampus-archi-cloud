@@ -91,7 +91,7 @@ response_model=Blog
 def create_blog(blog: BlogCreate):
     return sql_client.create_blog(blog)
 
-@app.patch("/blogs/{id}",
+@app.patch("/blogs/{blog_id}",
 description="Modifie un blog spécifique",
 summary="Modifie un blog spécifique",
 tags=["Blog"],
