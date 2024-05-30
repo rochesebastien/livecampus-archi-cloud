@@ -4,6 +4,7 @@ import Home from '../components/Home.vue'
 // Blogs
 import ListBlogs from '../components/Blogs/ListBlogs'
 import AddBlog from '@/components/Blogs/AddBlog.vue'
+import ShowBlog from '@/components/Blogs/ShowBlog.vue'
 
 // Articles
 
@@ -19,6 +20,11 @@ const routes = [
         path: '/blogs',
         component: ListBlogs,
         meta: { title: 'Liste des blogs', breadcrumb: ['Accueil', 'Blogs'] }
+    },
+    {
+        path: '/blog/:id',
+        component: ShowBlog,
+        meta: { title: 'Afficher un blog', breadcrumb: ['Accueil', 'Blog'] }
     },
     {
         path: '/blog/new',
