@@ -52,8 +52,8 @@ summary="Modifie un article spécifique",
 tags=["Article"],
 response_model=Article
 )
-def update_article(article_id: int):
-    return sql_client.update_article(article_id)
+def update_article(article_id: int, article: ArticleCreate):
+    return sql_client.update_article(article_id, article)
 
 @app.delete("/articles/{article_id}",
 description="Supprime un article spécifique",
@@ -97,8 +97,8 @@ summary="Modifie un blog spécifique",
 tags=["Blog"],
 response_model=Blog
 )
-def update_blog(blog_id: int):
-    return sql_client.update_blog(blog_id)
+def update_blog(blog_id: int, update_blog : BlogCreate):
+    return sql_client.update_blog(blog_id, update_blog)
 
 @app.delete("/blogs/{id}",
 description="Supprime un blog spécifique",
