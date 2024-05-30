@@ -5,7 +5,7 @@
                 variant="outlined" hide-details single-line></v-text-field>
         </template>
 
-        <v-data-table :headers="headers" :items="articles" :search="search">
+        <v-data-table :headers="headers" :items="blogs" :search="search">
             <template v-slot:item.actions="{ item }">
                 <ActionsMenu @click:item="onClickItem($event, item.id)" :items="actions" />
             </template>
@@ -23,6 +23,9 @@
 </template>
 <script setup>
 import { ref } from 'vue'
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
 
 const deleteDialog = ref()
 const selectedItem = ref()
@@ -39,7 +42,7 @@ const headers = [
     { key: 'articles_quantity', title: 'Nombre d\'article(s)' },
     { key: 'actions', title: 'Actions', align: 'end' }
 ]
-const articles = [
+const blogs = [
     {
         id: 1,
         title: 'Informatik',
@@ -57,16 +60,16 @@ const articles = [
 ]
 const actions = [
     {
+        title: 'Afficher',
+        action: 'show'
+    },
+    {
         title: 'Modifier',
         action: 'update'
     },
     {
         title: 'Supprimer',
         action: 'delete'
-    },
-    {
-        title: 'Afficher',
-        action: 'show'
     }
 ]
 
@@ -78,11 +81,16 @@ function onClickItem (action, item) {
             deleteDialog.value = true
             break;
         case 'update':
+            router.push({
+                path: `/blog/update/${item}`
+            })
             break;
         case 'show':
+            router.push({
+                path: `/blog/${item}`
+            })
             break;
     }
-    console.log(action, item);
 }
 
 function onDeleteBlog() {
