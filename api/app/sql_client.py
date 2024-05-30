@@ -13,8 +13,8 @@ class SqlClient():
         self.article_controller = ArticleController()
         self.blog_controller = BlogController()
     
-    def get_articles(self, articles):
-        return self.article_controller.read_articles(articles)
+    def get_articles(self):
+        return self.article_controller.read_articles()
     
     def get_article(self, article_id):
         return self.article_controller.read_article(article_id)
@@ -30,8 +30,8 @@ class SqlClient():
         return self.article_controller.delete_article(article_id)
         
 
-    def get_blogs(self, blogs):
-        return self.blog_controller.read_blogs(blogs)
+    def get_blogs(self):
+        return self.blog_controller.read_blogs()
 
     def get_blog(self):
         return self.blog_controller.read_blog()
