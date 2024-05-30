@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import date as DateType
 from typing import List
 from pydantic import BaseModel
 from .article import Article
@@ -6,7 +6,7 @@ from .article import Article
 class BlogBase(BaseModel):
     title: str
     topic: str
-    date: date
+    date: DateType = DateType.today()
 
 class BlogCreate(BlogBase):
     pass
@@ -16,4 +16,4 @@ class Blog(BlogBase):
     articles: List[Article] = []
 
     class Config:
-        orm_mode = True
+        from_attributes = True

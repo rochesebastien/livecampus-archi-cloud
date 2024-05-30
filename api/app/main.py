@@ -26,7 +26,7 @@ tags=["Article"],
 response_model=List[Article]
 )
 def get_articles():
-    sql_client.get_articles()
+    return sql_client.get_articles()
 
 @app.get("/articles/{article_id}",
 description="Récupère un article en fonction de l'id ",
@@ -35,7 +35,7 @@ tags=["Article"],
 response_model=Article
 )
 def get_article(article_id: int):
-    sql_client.get_article(article_id)
+    return sql_client.get_article(article_id)
 
 @app.post("/articles",
 description="Ajoute un article",
@@ -44,7 +44,7 @@ tags=["Article"],
 response_model=Article
 )
 def create_article(article: ArticleCreate):
-    sql_client.create_article(article)
+    return sql_client.create_article(article)
 
 @app.patch("/articles/{article_id}",
 description="Modifie un article spécifique",
@@ -52,8 +52,8 @@ summary="Modifie un article spécifique",
 tags=["Article"],
 response_model=Article
 )
-def update_article(article_id: int):
-    sql_client.update_article(article_id)
+def update_article(article_id: int, article: ArticleCreate):
+    return sql_client.update_article(article_id, article)
 
 @app.delete("/articles/{article_id}",
 description="Supprime un article spécifique",
@@ -61,7 +61,7 @@ summary="Supprime un article spécifique",
 tags=["Article"],
 )
 def delete_article(article_id: int):
-    sql_client.delete_article(article_id)
+    return sql_client.delete_article(article_id)
 
 @app.get("/blogs",
 description="Récupère la liste des blogs",
@@ -70,7 +70,8 @@ tags=["Blog"],
 response_model=List[Blog]
 )
 def get_blogs():
-    sql_client.get_blogs()
+    blogs = sql_client.get_blogs()
+    return blogs 
 
 @app.get("/blogs/{blog_id}",
 description="Récupère un blog en fonction de l'id ",
@@ -79,7 +80,7 @@ tags=["Blog"],
 response_model=Blog
 )
 def get_blog(blog_id: int):
-    sql_client.get_blog(blog_id)
+    return sql_client.get_blog(blog_id)
 
 @app.post("/blogs",
 description="Ajoute un blog",
@@ -88,16 +89,16 @@ tags=["Blog"],
 response_model=Blog
 )
 def create_blog(blog: BlogCreate):
-    sql_client.create_blog(blog)
+    return sql_client.create_blog(blog)
 
-@app.patch("/blogs/{id}",
+@app.patch("/blogs/{blog_id}",
 description="Modifie un blog spécifique",
 summary="Modifie un blog spécifique",
 tags=["Blog"],
 response_model=Blog
 )
-def update_blog(blog_id: int):
-    sql_client.update_blog(blog_id)
+def update_blog(blog_id: int, update_blog : BlogCreate):
+    return sql_client.update_blog(blog_id, update_blog)
 
 @app.delete("/blogs/{id}",
 description="Supprime un blog spécifique",
@@ -105,4 +106,4 @@ summary="Supprime un blog spécifique",
 tags=["Blog"],
 )
 def delete_blog(id: int):
-    sql_client.delete_blog(id)
+    return sql_client.delete_blog(id)
