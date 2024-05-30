@@ -2,6 +2,8 @@ from typing import List, Optional, Union
 from fastapi import FastAPI, HTTPException
 
 from app.sql_client import SqlClient 
+from app.schemas.blog import Blog, BlogCreate
+from app.schemas.article import Article, ArticleCreate
 
 tags_metadata = [
     {
@@ -15,88 +17,86 @@ tags_metadata = [
 ]
 
 app = FastAPI(openapi_tags=tags_metadata)
-
 client = SqlClient()
 
 @app.get("/articles",
 description="Récupère la liste des articles",
 summary="Récupère la liste des articles",
 tags=["Article"],
-# response_model=List[Article]
+response_model=List[Article]
 )
 def get_articles():
     return True
 
-@app.get("/articles/{id}",
+@app.get("/articles/{article_id}",
 description="Récupère un article en fonction de l'id ",
 summary="Récupère un article en fonction de l'id",
 tags=["Article"],
-# response_model=List[Article]
+response_model=Article
 )
-def get_article(id: int):
+def get_article(article_id: int):
     return True
 
 @app.post("/articles",
 description="Ajoute un article",
 summary="Ajoute un article",
 tags=["Article"],
-# response_model=List[Article]
+response_model=Article
 )
-def create_article():
+def create_article(article: ArticleCreate):
     return True
 
-@app.patch("/articles/{id}",
+@app.patch("/articles/{article_id}",
 description="Modifie un article spécifique",
 summary="Modifie un article spécifique",
 tags=["Article"],
-# response_model=List[Article]
+response_model=Article
 )
-def update_article(id: int):
+def update_article(article_id: int):
     return True
 
-@app.delete("/articles/{id}",
+@app.delete("/articles/{article_id}",
 description="Supprime un article spécifique",
 summary="Supprime un article spécifique",
 tags=["Article"],
-# response_model=List[Article]
 )
-def delete_article(id: int):
+def delete_article(article_id: int):
     return True
 
 @app.get("/blogs",
 description="Récupère la liste des blogs",
 summary="Récupère la liste des blogs",
 tags=["Blog"],
-# response_model=List[Blog]
+response_model=List[Blog]
 )
 def get_blogs():
     return True
 
-@app.get("/blogs/{id}",
+@app.get("/blogs/{blog_id}",
 description="Récupère un blog en fonction de l'id ",
 summary="Récupère un article en fonction de l'id ",
 tags=["Blog"],
-# response_model=List[Blog]
+response_model=Blog
 )
-def get_blog(id: int):
+def get_blog(blog_id: int):
     return True
 
 @app.post("/blogs",
 description="Ajoute un blog",
 summary="Ajoute un blog",
 tags=["Blog"],
-# response_model=List[Blog]
+response_model=Blog
 )
-def create_blog():
+def create_blog(blog: BlogCreate):
     return True
 
 @app.patch("/blogs/{id}",
 description="Modifie un blog spécifique",
 summary="Modifie un blog spécifique",
 tags=["Blog"],
-# response_model=List[Blog]
+response_model=Blog
 )
-def update_blog(id: int):
+def update_blog(blog_id: int):
     return True
 
 @app.delete("/blogs/{id}",
