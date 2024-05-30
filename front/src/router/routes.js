@@ -3,7 +3,8 @@ import Home from '../components/Home.vue'
 
 // Blogs
 import ListBlogs from '../components/Blogs/ListBlogs'
-import AddBlog from '@/components/Blogs/AddBlog.vue'
+import FormBlog from '@/components/Blogs/FormBlog.vue'
+import ShowBlog from '@/components/Blogs/ShowBlog.vue'
 
 // Articles
 
@@ -21,11 +22,20 @@ const routes = [
         meta: { title: 'Liste des blogs', breadcrumb: ['Accueil', 'Blogs'] }
     },
     {
-        path: '/blog/new',
-        component: AddBlog,
-        meta: { title: 'Ajouter un blog', breadcrumb: ['Accueil', 'Nouveau'] }
+        path: '/blog/:id',
+        component: ShowBlog,
+        meta: { title: 'Afficher un blog', breadcrumb: ['Accueil', 'Blog'] }
     },
-    // Articles
+    {
+        path: '/blog/new',
+        component: FormBlog,
+        meta: { title: 'Créer un blog', breadcrumb: ['Accueil', 'Blog', 'Nouveau'] }
+    },
+    {
+        path: '/blog/update/:id',
+        component: FormBlog,
+        meta: { title: 'Modifier un blog', breadcrumb: ['Accueil', 'Blog', 'Modifier'] }
+    }
 ]
 
 // Routes for navbar
@@ -50,17 +60,6 @@ export const navbarBlogRoutes = [
     }
 ]
 
-export const navbarArticleRoutes = [
-    {
-        icon: 'mdi-file',
-        title: 'Les articles',
-        href: '/articles'
-    },
-    {
-        icon: 'mdi-plus',
-        title: 'Créer un article',
-        href: '/article/new'
-    }
-]
+export const navbarArticleRoutes = []
 
 export default routes
