@@ -10,17 +10,20 @@ class ArticleController(SqlBase):
     def __init__(self):
         super().__init__()
 
-    def read_articles(skip: int = 0, limit: int = 10, db: Session = Depends(db_instance.get_db)):
-        articles = db.query(ArticleModel).offset(skip).limit(limit).all()
+    def read_articles(self, skip: int = 0):
+        db = next(db_instance.get_db())
+        articles = db.query(ArticleModel).offset(skip).all()
         return articles
 
-    def read_article(self, article_id: int, db: Session = Depends(db_instance.get_db)):
+    def read_article(self, article_id: int):
+        db = next(db_instance.get_db())
         article = db.query(ArticleModel).filter(ArticleModel.id == article_id).first()
         if article is None:
             raise HTTPException(status_code=404, detail="Article not found")
         return article
 
-    def create_article(article: ArticleCreate, db: Session = Depends(db_instance.get_db)):
+    def create_article(self, article: ArticleCreate):
+        db = next(db_instance.get_db())
         db_article = ArticleModel(
             title=article.title, content=article.content, ranking=article.ranking, blog_id=article.blog_id)
         db.add(db_article)
@@ -28,7 +31,8 @@ class ArticleController(SqlBase):
         db.refresh(db_article)
         return db_article
 
-    def update_article(self, article_id: int, article: ArticleCreate, db: Session = Depends(db_instance.get_db)):
+    def update_article(self, article_id: int, article: ArticleCreate):
+        db = next(db_instance.get_db())
         db_article = db.query(ArticleModel).filter(ArticleModel.id == article_id).first()
         if db_article is None:
             raise HTTPException(status_code=404, detail="Article not found")
@@ -40,7 +44,8 @@ class ArticleController(SqlBase):
         db.refresh(db_article)
         return db_article
 
-    def delete_article(self, article_id: int, db: Session = Depends(db_instance.get_db)):
+    def delete_article(self, article_id: int):
+        db = next(db_instance.get_db())
         db_article = db.query(ArticleModel).filter(ArticleModel.id == article_id).first()
         if db_article is None:
             raise HTTPException(status_code=404, detail="Article not found")

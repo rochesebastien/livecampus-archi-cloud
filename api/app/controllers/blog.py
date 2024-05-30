@@ -12,27 +12,32 @@ class BlogController(SqlBase):
     def __init__(self):
         super().__init__()
 
-    def read_blogs(self, skip: int = 0, limit: int = 10, db: Session = Depends(db_instance.get_db)):
-        blogs = db.query(BlogModel).offset(skip).limit(limit).all()
+    def read_blogs(self, skip: int = 0):
+        db = next(db_instance.get_db())
+        blogs = db.query(BlogModel).offset(skip).all()
         return blogs
 
-    def read_blog(self, blog_id: int, db: Session = Depends(db_instance.get_db)):
+    def read_blog(self, blog_id: int):
+        db = next(db_instance.get_db())
         blog = db.query(BlogModel).filter(BlogModel.id == blog_id).first()
         if blog is None:
-            raise HTTPException(status_code=404, detail="Blog not found")
+            raise HTTPException(status_code=404, detail="Blog non trouvé")
         return blog
 
-    def create_blog(self,blog: BlogCreate, db: Session = Depends(db_instance.get_db)):
+    def create_blog(self, blog: BlogCreate):
+        db = next(db_instance.get_db())
         db_blog = BlogModel(title=blog.title, topic=blog.topic, date=blog.date)
         db.add(db_blog)
         db.commit()
         db.refresh(db_blog)
+        print(db_blog)
         return db_blog
 
-    def update_blog(self, blog_id: int, blog: BlogCreate, db: Session = Depends(db_instance.get_db)):
+    def update_blog(self, blog_id: int, blog: BlogCreate):
+        db = next(db_instance.get_db())
         db_blog = db.query(BlogModel).filter(BlogModel.id == blog_id).first()
         if db_blog is None:
-            raise HTTPException(status_code=404, detail="Blog not found")
+            raise HTTPException(status_code=404, detail="Blog non trouvé")
         db_blog.title = blog.title
         db_blog.topic = blog.topic
         db_blog.date = blog.date
@@ -40,10 +45,11 @@ class BlogController(SqlBase):
         db.refresh(db_blog)
         return db_blog
 
-    def delete_blog(self, blog_id: int, db: Session = Depends(db_instance.get_db)):
+    def delete_blog(self, blog_id: int):
+        db = next(db_instance.get_db())
         db_blog = db.query(BlogModel).filter(BlogModel.id == blog_id).first()
         if db_blog is None:
-            raise HTTPException(status_code=404, detail="Blog not found")
+            raise HTTPException(status_code=404, detail="Blog non trouvé")
         db.delete(db_blog)
         db.commit()
         return db_blog
