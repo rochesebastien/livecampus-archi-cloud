@@ -35,8 +35,10 @@ async function onClickButton () {
 }
 
 onMounted(async () => {
-    const blog = await getBlog(id)
-    name.value = blog.title
-    topic.value = blog.topic
+    if (id) {
+        const blog = await getBlog(id)
+        name.value = blog.title
+        topic.value = blog.topic
+    }
 })
 </script>
