@@ -23,6 +23,7 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
+        cache-dependency-path: front/package-lock.json
     - run: npm ci --prefix front
     - run: npm run build --prefix front --if-present
     - run: npm test --prefix front --if-present
