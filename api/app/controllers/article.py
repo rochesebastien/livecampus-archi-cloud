@@ -19,7 +19,7 @@ class ArticleController(SqlBase):
         db = next(db_instance.get_db())
         article = db.query(ArticleModel).filter(ArticleModel.id == article_id).first()
         if article is None:
-            raise HTTPException(status_code=404, detail="Article not found")
+            raise HTTPException(status_code=404, detail="Article non trouvé")
         return article
 
     def create_article(self, article: ArticleCreate):
@@ -35,7 +35,7 @@ class ArticleController(SqlBase):
         db = next(db_instance.get_db())
         db_article = db.query(ArticleModel).filter(ArticleModel.id == article_id).first()
         if db_article is None:
-            raise HTTPException(status_code=404, detail="Article not found")
+            raise HTTPException(status_code=404, detail="Article non trouvé")
         db_article.title = article.title
         db_article.content = article.content
         db_article.ranking = article.ranking
@@ -48,7 +48,7 @@ class ArticleController(SqlBase):
         db = next(db_instance.get_db())
         db_article = db.query(ArticleModel).filter(ArticleModel.id == article_id).first()
         if db_article is None:
-            raise HTTPException(status_code=404, detail="Article not found")
+            raise HTTPException(status_code=404, detail="Article non trouvé")
         db.delete(db_article)
         db.commit()
         return db_article
