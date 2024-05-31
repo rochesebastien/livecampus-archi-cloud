@@ -1,0 +1,36 @@
+name: CI for API
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.x'  # Remplacez par la version de Python que vous utilisez
+
+    - name: Change directory to api
+      run: cd api
+
+    - name: Install dependencies
+      run: |
+        python3 -m venv venv
+        source venv/bin/activate
+        pip install -r requirements.txt
+
+    - name: Run API
+      run: |
+        source venv/bin/activate
+        uvicorn app.main:app --reload --port 8000 --host 0.0.0.0
