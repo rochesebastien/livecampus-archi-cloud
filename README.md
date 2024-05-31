@@ -34,7 +34,10 @@ uvicorn app.main:app --reload --port 8000 --host 0.0.0.0
 ```bash
 python -m unittest discover -s /tests -p 'test_*.py’
 ```
+## Diagramme UML : 
+Nous avons deux classes : 
 
+![Image Description](docs/uml.png)  
 # Front : Vuetify
 
 - Clone du repo  :
