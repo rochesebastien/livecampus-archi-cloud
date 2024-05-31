@@ -1,68 +1,77 @@
 import unittest
-from unittest.mock import patch, MagicMock
-from app.controllers.article import ArticleController
+from fastapi import HTTPException
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
 from app.models.article import Article as ArticleModel
 from app.schemas.article import ArticleCreate
-from fastapi import HTTPException
+from app.controllers.base import SqlBase
+from app.controllers.article import ArticleController
 
 class TestArticleController(unittest.TestCase):
 
-    @patch('app.controllers.article.db_instance')
-    def setUp(self, mock_db_instance):
-        self.controller = ArticleController()
-        self.mock_db = MagicMock()
-        mock_db_instance.get_db.return_value = iter([self.mock_db])
+    def setUp(self):
+
+        self.SQLALCHEMY_DATABASE_URL = f"sqlite:///tests/mock_database.db"
+        self.engine = create_engine(self.SQLALCHEMY_DATABASE_URL)
+        self.SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=self.engine)
+        ArticleModel.metadata.create_all(bind=self.engine)
+        self.db_instance = SqlBase()
+        self.db_instance.engine = self.engine
+        self.db_instance.SessionLocal = self.SessionLocal
+        self.article_controller = ArticleController()
+        self.article_controller.db_instance = self.db_instance
+
+    def tearDown(self):
+        ArticleModel.metadata.drop_all(bind=self.engine)
 
     def test_read_articles(self):
-        self.controller.read_articles()
-        self.mock_db.query.assert_called_with(ArticleModel)
-        self.mock_db.query().offset().all.assert_called()
+        with self.db_instance.get_db() as db:
+            db.add(ArticleModel(title="Test Article", content="Test Content", ranking=1, blog_id=1))
+            db.commit()
+        
+        articles = self.article_controller.read_articles(skip=0)
+        self.assertEqual(len(articles), 1)
+        self.assertEqual(articles[0].title, "Test Article")
 
     def test_read_article(self):
-        self.mock_db.query().filter().first.return_value = ArticleModel()
-        self.controller.read_article(1)
-        self.mock_db.query.assert_called_with(ArticleModel)
-        self.mock_db.query().filter.assert_called()
+        with self.db_instance.get_db() as db:
+            db.add(ArticleModel(id=1, title="Test Article", content="Test Content", ranking=1, blog_id=1))
+            db.commit()
+        
+        article = self.article_controller.read_article(article_id=1)
+        self.assertEqual(article.title, "Test Article")
 
-    def test_read_article_not_found(self):
-        self.mock_db.query().filter().first.return_value = None
         with self.assertRaises(HTTPException):
-            self.controller.read_article(1)
+            self.article_controller.read_article(article_id=2)
 
     def test_create_article(self):
-        article = ArticleCreate(title="Test", content="Test content", ranking=1, blog_id=1)
-        self.controller.create_article(article)
-        self.mock_db.add.assert_called()
-        self.mock_db.commit.assert_called()
-        self.mock_db.refresh.assert_called()
+        article_create = ArticleCreate(title="New Article", content="New Content", ranking=2, blog_id=1)
+        db_article = self.article_controller.create_article(article=article_create)
+        self.assertEqual(db_article.title, "New Article")
 
     def test_update_article(self):
-        article = ArticleCreate(title="Test", content="Test content", ranking=1, blog_id=1)
-        self.mock_db.query().filter().first.return_value = ArticleModel()
-        self.controller.update_article(1, article)
-        self.mock_db.query.assert_called_with(ArticleModel)
-        self.mock_db.query().filter.assert_called()
-        self.mock_db.commit.assert_called()
-        self.mock_db.refresh.assert_called()
+        with self.db_instance.get_db() as db:
+            db.add(ArticleModel(id=1, title="Old Article", content="Old Content", ranking=1, blog_id=1))
+            db.commit()
 
-    def test_update_article_not_found(self):
-        article = ArticleCreate(title="Test", content="Test content", ranking=1, blog_id=1)
-        self.mock_db.query().filter().first.return_value = None
+        article_update = ArticleCreate(title="Updated Article", content="Updated Content", ranking=3, blog_id=2)
+        db_article = self.article_controller.update_article(article_id=1, article=article_update)
+        self.assertEqual(db_article.title, "Updated Article")
+        self.assertEqual(db_article.content, "Updated Content")
+
         with self.assertRaises(HTTPException):
-            self.controller.update_article(1, article)
+            self.article_controller.update_article(article_id=2, article=article_update)
 
     def test_delete_article(self):
-        self.mock_db.query().filter().first.return_value = ArticleModel()
-        self.controller.delete_article(1)
-        self.mock_db.query.assert_called_with(ArticleModel)
-        self.mock_db.query().filter.assert_called()
-        self.mock_db.delete.assert_called()
-        self.mock_db.commit.assert_called()
+        with self.db_instance.get_db() as db:
+            db.add(ArticleModel(id=1, title="Test Article", content="Test Content", ranking=1, blog_id=1))
+            db.commit()
 
-    def test_delete_article_not_found(self):
-        self.mock_db.query().filter().first.return_value = None
+        db_article = self.article_controller.delete_article(article_id=1)
+        self.assertEqual(db_article.title, "Test Article")
+
         with self.assertRaises(HTTPException):
-            self.controller.delete_article(1)
+            self.article_controller.delete_article(article_id=2)
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()
