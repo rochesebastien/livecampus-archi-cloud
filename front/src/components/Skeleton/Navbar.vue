@@ -13,14 +13,14 @@
                     <RouterLink v-for="route in navbarDefaultRoutes" :to="route.href" style="text-decoration: none; color: inherit;"><v-list-item :prepend-icon="route.icon" :title="route.title"></v-list-item></RouterLink>
                 </v-list>
 
-                <v-divider></v-divider>
+                <v-divider v-if="navbarBlogRoutes.length > 0"></v-divider>
 
                 <!-- Blogs routes -->
                 <v-list density="compact" nav>
                     <RouterLink v-for="route in navbarBlogRoutes" :to="route.href" style="text-decoration: none; color: inherit;"><v-list-item :prepend-icon="route.icon" :title="route.title"></v-list-item></RouterLink>
                 </v-list>
 
-                <v-divider></v-divider>
+                <v-divider v-if="navbarArticleRoutes.length > 0"></v-divider>
 
                 <!-- Articles routes -->
                 <v-list density="compact" nav>
