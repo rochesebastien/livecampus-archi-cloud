@@ -1,11 +1,11 @@
 <template>
-    <v-card flat>
+    <v-card flat v-if="!loading">
         <template v-slot:text>
             <v-text-field v-model="search" label="Rechercher un blog..." prepend-inner-icon="mdi-magnify"
                 variant="outlined" hide-details single-line></v-text-field>
         </template>
 
-        <v-data-table :headers="headers" :items="blogs" :search="search">
+        <v-data-table :headers="headers" :items="_blogs" :search="search">
             <template v-slot:item.actions="{ item }">
                 <ActionsMenu @click:item="onClickItem($event, item.id)" :items="actions" />
             </template>
@@ -22,13 +22,15 @@
     </v-dialog>
 </template>
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
+import { getBlogs, deleteBlog } from '../../repository/blogs'
 
 const router = useRouter()
 
 const deleteDialog = ref()
 const selectedItem = ref()
+const loading = ref(true)
 
 const search = ref('')
 const headers = [
@@ -42,22 +44,8 @@ const headers = [
     { key: 'articles_quantity', title: 'Nombre d\'article(s)' },
     { key: 'actions', title: 'Actions', align: 'end' }
 ]
-const blogs = [
-    {
-        id: 1,
-        title: 'Informatik',
-        topic: "Tous les sujets sur l'informatique.",
-        date: '30/05/2024',
-        articles_quantity: 7
-    },
-    {
-        id: 2,
-        title: 'Informatik',
-        topic: "Tous les sujets sur l'informatique.",
-        date: '30/05/2024',
-        articles_quantity: 7
-    }
-]
+const blogs = ref([])
+
 const actions = [
     {
         title: 'Afficher',
@@ -72,6 +60,11 @@ const actions = [
         action: 'delete'
     }
 ]
+
+// Computed
+const _blogs = computed(() => {
+    return blogs.value.map(blog => ({...blog, articles_quantity: blog.articles.length, date: formatDate(blog.date)}))
+})
 
 // Methods
 function onClickItem (action, item) {
@@ -93,7 +86,30 @@ function onClickItem (action, item) {
     }
 }
 
-function onDeleteBlog() {
-    alert('Suppression de ' + selectedItem.value)
+async function onDeleteBlog() {
+    const deleted = await deleteBlog(selectedItem.value)
+    if (deleted) blogs.value = blogs.value.filter(blog => blog.id != selectedItem.value)
 }
+
+function formatDate(dateParam) {
+    let date = new Date(dateParam)
+    let day = date.getDate();
+    let month = date.getMonth() + 1
+    let year = date.getFullYear();
+
+    if (day < 10) {
+        day = '0' + day;
+    }
+    if (month < 10) {
+        month = '0' + month;
+    }
+
+    return day + '/' + month + '/' + year;
+}
+
+// onMounted
+onMounted(async () => {
+    blogs.value = await getBlogs()
+    loading.value = false
+})
 </script>

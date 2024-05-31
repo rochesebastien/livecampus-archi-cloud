@@ -6,11 +6,13 @@
     </v-form>
 </template>
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { require } from '../helper/rules';
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
+import { createBlog, getBlog, updateBlog } from '@/repository/blogs';
 
 const route = useRoute()
+const router = useRouter()
 const id = route.params?.id
 
 const form = ref()
@@ -18,11 +20,23 @@ const name = ref()
 const topic = ref()
 
 // Methods
-function onClickButton () {
+async function onClickButton () {
     if (id) {
-        alert('update ' + id)
+        await updateBlog(id, name.value, topic.value, '2024-05-31')
+        router.push({
+            path: '/blogs'
+        })
     } else {
-        alert('create')
+        await createBlog(name.value, topic.value, '2024-05-31')
+        router.push({
+            path: '/blogs'
+        })
     }
 }
+
+onMounted(async () => {
+    const blog = await getBlog(id)
+    name.value = blog.title
+    topic.value = blog.topic
+})
 </script>
