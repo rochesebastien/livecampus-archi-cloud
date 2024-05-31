@@ -1,3 +1,2 @@
 CONFIG_BDD:
   PATH: "/database/database.db"
-  NAME: ""
