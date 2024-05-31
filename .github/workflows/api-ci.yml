@@ -21,16 +21,15 @@ jobs:
       with:
         python-version: '3.x'  # Remplacez par la version de Python que vous utilisez
 
-    - name: Change directory to api
-      run: cd api
-
     - name: Install dependencies
       run: |
+        cd api
         python3 -m venv venv
         source venv/bin/activate
         pip install -r requirements.txt
 
     - name: Run API
       run: |
+        cd api
         source venv/bin/activate
         uvicorn app.main:app --reload --port 8000 --host 0.0.0.0
