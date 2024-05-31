@@ -2,12 +2,12 @@ from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
-# from app.config.config import config
+from app.config.confg import Config
 
 class SqlBase:
     def __init__(self):
-        # self.db_file = config.CONFIG_BDD['PATH']
-        self.SQLALCHEMY_DATABASE_URL = f"sqlite:///database/database.db"
+        self.config = Config()
+        self.SQLALCHEMY_DATABASE_URL = f"sqlite://{self.config.config['CONFIG_BDD']['PATH']}"
         self.engine = create_engine(self.SQLALCHEMY_DATABASE_URL)
         self.SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=self.engine)
         self.Base = declarative_base()
