@@ -11,6 +11,9 @@
                             variant="outlined" hide-details single-line></v-text-field>
                     </template>
 
+                    <div class="d-flex justify-end">
+                        <v-btn color="primary" @click="addDialog = true">Ajouter un article</v-btn>
+                    </div>
                     <v-data-table :headers="headers" :items="blog.articles" :search="search">
                         <template v-slot:item.actions="{ item }">
                             <ActionsMenu @click:item="onClickItem($event, item.id)" :items="actions" />
@@ -27,20 +30,40 @@
                         </div>
                     </v-card>
                 </v-dialog>
+                <v-dialog v-model="addDialog" width="auto">
+                    <v-card max-width="400" prepend-icon="mdi-plus" title="Création d'un article">
+                        <v-form class="pa-4" v-model="addForm">
+                            <v-text-field v-model="addTitle" :rules="[require]" :placeholder="'Nom de l\'article'" />
+                            <v-text-field v-model="addContent" :rules="[require]" :placeholder="'Contenu'" />
+                        </v-form>
+                        <div class="d-flex justify-end pa-1">
+                            <v-btn color="error" text="Annuler" @click="addDialog = false"></v-btn>
+                            <v-btn :disabled="!addForm" class="ms-1" color="success" text="Créer"
+                                @click="addDialog = false; addArticle()"></v-btn>
+                        </div>
+                    </v-card>
+                </v-dialog>
     </div>
 </template>
 <script setup>
 import { onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { getBlog } from '@/repository/blogs';
+import { deleteArticle, createArticle } from '@/repository/articles'
+import { require } from '../helper/rules';
 
 const route = useRoute()
 const id = route.params.id
 
 const blog = ref()
 const loading = ref(true)
+const addForm = ref()
+
+const addTitle = ref()
+const addContent = ref()
 
 const deleteDialog = ref()
+const addDialog = ref()
 const selectedItem = ref()
 
 const search = ref('')
@@ -73,8 +96,14 @@ function onClickItem(action, item) {
     }
 }
 
-function onDeleteArticle() {
-    alert('Suppression de ' + selectedItem.value)
+async function onDeleteArticle() {
+    const deleted = await deleteArticle(selectedItem.value)
+    if (deleted) blog.value.articles = blog.value.articles.filter(article => article.id != selectedItem.value)
+}
+
+async function addArticle() {
+    await createArticle(addTitle.value, addContent.value, 5, id)
+    blog.value = await getBlog(id)
 }
 
 // Lifecycle
