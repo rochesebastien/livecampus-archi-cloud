@@ -12,8 +12,11 @@ export function getBlog(id) {
     })
 }
 
-export function deleteBlog(id) {
-    axios.delete(url + 'blogs/' + id).then((res, req) => {
-        console.log(res);
-    })
+export async function deleteBlog(id) {
+    try {
+        await axios.delete(url + 'blogs/' + id)
+        return true
+    } catch {
+        return false
+    }
 }

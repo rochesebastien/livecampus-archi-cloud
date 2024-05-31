@@ -24,7 +24,7 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
-import { getBlogs } from '../../repository/blogs'
+import { getBlogs, deleteBlog } from '../../repository/blogs'
 
 const router = useRouter()
 
@@ -86,8 +86,9 @@ function onClickItem (action, item) {
     }
 }
 
-function onDeleteBlog() {
-    alert('Suppression de ' + selectedItem.value)
+async function onDeleteBlog() {
+    const deleted = await deleteBlog(selectedItem.value)
+    if (deleted) blogs.value = blogs.value.filter(blog => blog.id != selectedItem.value)
 }
 
 function formatDate(dateParam) {
