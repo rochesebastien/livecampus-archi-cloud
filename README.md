@@ -35,3 +35,25 @@ uvicorn app.main:app --reload --port 8000 --host 0.0.0.0
 python -m unittest discover -s /tests -p 'test_*.py’
 ```
 
+# Front : Vuetify
+
+- Clone du repo  :
+```bash
+git clone https://github.com/rochesebastien/livecampus-archi-cloud.git
+cd livecampus-archi-cloud
+cd front
+```
+
+- Installation des dépendances : 
+```bash
+npm i 
+```
+
+- Démarrage : 
+```bash
+npm run dev 
+# ou
+npm run start 
+# ou
+npm run build
+```
